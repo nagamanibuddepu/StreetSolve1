@@ -40,6 +40,7 @@ const statsRoutes = require('./routes/stats');
 // ─── App Init ───────────────────────────────────────────────────────────────
 const app = express();
 const server = http.createServer(app);
+app.set('trust proxy', 1);
 
 // ─── Socket.IO ──────────────────────────────────────────────────────────────
 const io = new Server(server, {
@@ -79,14 +80,27 @@ const authLimiter = rateLimit({
 app.use('/api/auth/', authLimiter);
 
 // ─── CORS ───────────────────────────────────────────────────────────────────
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL || 'http://localhost:5173',
-    'http://localhost:3000',
-  ],
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-refresh-token'],
 }));
 
 // ─── Body Parsing ───────────────────────────────────────────────────────────
@@ -136,6 +150,12 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
   });
 }
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'StreetSolve Backend Running 🚀'
+  });
+});
 
 // ─── 404 Handler ────────────────────────────────────────────────────────────
 app.use('*', (req, res) => {
