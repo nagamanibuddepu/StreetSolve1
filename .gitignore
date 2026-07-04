@@ -1,19 +1,15 @@
-# Root node_modules
 node_modules/
+**/node_modules/
 
-# Backend
-backend/node_modules/
-backend/.env
-backend/logs/
-backend/logs/*.log
-backend/dist/
+.env
+**/.env
 
-# Frontend
-frontend/node_modules/
-frontend/.env
-frontend/dist/
-
-# Common
-*.env
+logs/
 *.log
+
+dist/
+build/
+
+.vscode/
+
 .DS_Store

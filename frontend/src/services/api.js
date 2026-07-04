@@ -59,6 +59,7 @@ export const aiAPI = {
   classify: (d) => api.post('/ai/classify', d),
   translate: (d) => api.post('/ai/translate', d),
   summary: (p) => api.get('/ai/summary', { params: p }),
+  transcribe: (fd) => api.post('/ai/transcribe', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
 };
 
 export const notifAPI = {

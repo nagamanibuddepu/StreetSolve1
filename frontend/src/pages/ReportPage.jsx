@@ -1,13 +1,8 @@
-/**
- * ReportPage - Completely redesigned
- * Clear flow: choose mode → fill details → add location → submit
- * No language confusion, no redundant steps
- */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { issuesAPI, aiAPI } from '../services/api';
-import { useGeolocation } from '../hooks/useGeolocation';
+import { useGeolocation, forwardGeocode } from '../hooks/useGeolocation';
 import { useVoice } from '../hooks/useVoice';
 import ImageUpload from '../components/forms/ImageUpload';
 import { CATEGORY_CONFIG, classifyKeywords, LANGUAGES } from '../utils/helpers';
@@ -65,18 +60,38 @@ export default function ReportPage() {
     if (!location && !manualAddress.trim()) { toast.error('Add a location'); return; }
     setSubmitting(true);
     try {
+      let finalLat = location?.lat || 17.385;
+      let finalLng = location?.lng || 78.487;
+      let finalAddress = manualAddress || location?.address || '';
+      let finalCity = location?.city || '';
+      let finalState = location?.state || '';
+      let finalPincode = location?.pincode || '';
+      let finalFormattedAddress = manualAddress || location?.formattedAddress || '';
+
+      if (manualAddress.trim()) {
+        const geo = await forwardGeocode(manualAddress);
+        if (geo) {
+          finalLat = geo.lat;
+          finalLng = geo.lng;
+          finalCity = geo.city || finalCity;
+          finalState = geo.state || finalState;
+          finalPincode = geo.pincode || finalPincode;
+          finalFormattedAddress = geo.formattedAddress || finalFormattedAddress;
+        }
+      }
+
       const fd = new FormData();
       fd.append('title', form.title);
       fd.append('description', form.description);
       fd.append('category', form.category);
       fd.append('language', lang);
-      fd.append('lat', location?.lat || 17.385);
-      fd.append('lng', location?.lng || 78.487);
-      fd.append('address', location?.address || manualAddress);
-      fd.append('city', location?.city || '');
-      fd.append('state', location?.state || '');
-      fd.append('pincode', location?.pincode || '');
-      fd.append('formattedAddress', location?.formattedAddress || manualAddress);
+      fd.append('lat', finalLat);
+      fd.append('lng', finalLng);
+      fd.append('address', finalAddress);
+      fd.append('city', finalCity);
+      fd.append('state', finalState);
+      fd.append('pincode', finalPincode);
+      fd.append('formattedAddress', finalFormattedAddress);
       fd.append('inputMethod', mode === 'photo' ? 'image' : mode || 'text');
       files.forEach(f => fd.append('media', f));
       const res = await issuesAPI.create(fd);
@@ -119,7 +134,7 @@ export default function ReportPage() {
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
         <div className="font-semibold mb-1">📌 Note for Voice Users</div>
-        You can speak in your regional language — Gemini AI will transcribe and translate it automatically. Make sure to allow microphone access.
+        You can speak in your regional language — Groq AI will transcribe and translate it automatically. Make sure to allow microphone access.
       </div>
     </main>
   );
@@ -156,7 +171,7 @@ export default function ReportPage() {
               {isRecording ? (
                 <span className="text-red-600 font-semibold flex items-center gap-2">
                   <span className="w-2 h-2 bg-red-500 rounded-full inline-block animate-pulse" />
-                  Recording via {activeMethod === 'gemini' ? 'Gemini AI' : 'Browser'}...
+                  Recording via {activeMethod === 'ai' ? 'Groq Whisper AI' : 'Browser'}...
                 </span>
               ) : processing ? (
                 <span className="text-orange-600 font-semibold">🔄 Processing audio...</span>

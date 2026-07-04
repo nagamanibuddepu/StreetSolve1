@@ -3,65 +3,81 @@
 @tailwind utilities;
 
 @layer base {
-  * { box-sizing: border-box; }
-  body { @apply font-body bg-slate-50 text-slate-800 antialiased; }
+  html { height: 100%; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+  body { min-height: 100%; @apply font-body bg-slate-50 text-slate-800 antialiased; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
   h1,h2,h3,h4,h5 { @apply font-display; }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { @apply bg-slate-100; }
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
   ::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 @layer components {
-  .btn { @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-display font-semibold text-sm transition-all duration-150 cursor-pointer border-none outline-none select-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100; }
+  /* Buttons */
+  .btn { @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-display font-semibold text-sm transition-all duration-150 cursor-pointer select-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100; border: none; outline: none; }
   .btn-primary  { @apply bg-orange-500 text-white hover:bg-orange-600 shadow-sm; }
   .btn-secondary{ @apply bg-navy text-white hover:bg-navy-light shadow-sm; }
   .btn-outline  { @apply bg-transparent text-orange-500 border-2 border-orange-400 hover:bg-orange-50; }
   .btn-ghost    { @apply bg-slate-100 text-slate-600 hover:bg-slate-200; }
   .btn-danger   { @apply bg-red-600 text-white hover:bg-red-700; }
+  .btn-green    { @apply bg-green-600 text-white hover:bg-green-700; }
   .btn-lg       { @apply px-6 py-3.5 text-base rounded-xl; }
   .btn-sm       { @apply px-3 py-1.5 text-xs rounded-md; }
   .btn-full     { @apply w-full justify-center; }
 
-  .card         { @apply bg-white rounded-xl p-5 border border-slate-200 shadow-sm; }
-  .card-hover   { @apply card hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 cursor-pointer; }
+  /* Cards */
+  .card       { @apply bg-white rounded-xl p-5 border border-slate-200 shadow-sm; }
+  .card-hover { @apply card hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 cursor-pointer; }
 
-  .input        { @apply w-full px-3.5 py-2.5 border border-slate-300 rounded-lg font-body text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all placeholder:text-slate-400; }
-  .label        { @apply block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide; }
+  /* Inputs */
+  .input { @apply w-full px-3.5 py-2.5 border border-slate-300 rounded-lg font-body text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all placeholder:text-slate-400; }
+  .label { @apply block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide; }
 
-  .badge           { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold; }
-  .badge-reported  { @apply bg-amber-100 text-amber-800; }
-  .badge-accepted  { @apply bg-blue-100 text-blue-800; }
-  .badge-inprogress{ @apply bg-violet-100 text-violet-800; }
-  .badge-completed { @apply bg-emerald-100 text-emerald-800; }
-  .badge-verified  { @apply bg-green-100 text-green-800; }
-  .badge-reopened  { @apply bg-red-100 text-red-800; }
-  .badge-rejected  { @apply bg-slate-100 text-slate-600; }
-  .badge-roads     { @apply bg-yellow-100 text-yellow-800; }
-  .badge-sanitation{ @apply bg-pink-100 text-pink-800; }
-  .badge-water     { @apply bg-blue-100 text-blue-800; }
-  .badge-electricity{@apply bg-orange-100 text-orange-800; }
-  .badge-parks     { @apply bg-emerald-100 text-emerald-800; }
+  /* Badges */
+  .badge { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-reported   { @apply bg-amber-100 text-amber-800; }
+  .badge-accepted   { @apply bg-blue-100 text-blue-800; }
+  .badge-inprogress { @apply bg-violet-100 text-violet-800; }
+  .badge-completed  { @apply bg-emerald-100 text-emerald-800; }
+  .badge-verified   { @apply bg-green-100 text-green-800; }
+  .badge-reopened   { @apply bg-red-100 text-red-800; }
+  .badge-rejected   { @apply bg-slate-100 text-slate-600; }
+  .badge-roads      { @apply bg-yellow-100 text-yellow-800; }
+  .badge-sanitation { @apply bg-pink-100 text-pink-800; }
+  .badge-water      { @apply bg-blue-100 text-blue-800; }
+  .badge-electricity{ @apply bg-orange-100 text-orange-800; }
+  .badge-parks      { @apply bg-emerald-100 text-emerald-800; }
+  .badge-noise      { @apply bg-purple-100 text-purple-800; }
 
-  .page    { @apply min-h-screen pb-24 max-w-3xl mx-auto px-4; }
-  .chip    { @apply px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-500 whitespace-nowrap cursor-pointer transition-all hover:border-slate-300 hover:text-slate-700; }
+  /* Layout */
+  .page        { @apply max-w-3xl mx-auto px-4 pt-4 pb-24; }
+  .chip        { @apply px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-500 whitespace-nowrap cursor-pointer transition-all hover:border-slate-400 hover:text-slate-700; }
   .chip.active { @apply border-orange-500 bg-orange-500 text-white; }
-  .divider { @apply flex items-center gap-3 text-slate-400; }
+  .divider     { @apply flex items-center gap-3 text-slate-400; }
   .divider::before,.divider::after { content:''; @apply flex-1 h-px bg-slate-200; }
-
-  .gov-strip { @apply bg-blue-900 text-white text-xs py-1.5 px-4 text-center font-medium tracking-wide; }
   .section-title { @apply font-display font-bold text-slate-800 text-lg mb-4; }
+  .gov-strip   { @apply bg-[#154360] text-white/80 text-[10px] py-1 px-4 text-center tracking-wide; }
 }
 
-@keyframes fadeUp  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeIn  { from{opacity:0} to{opacity:1} }
-@keyframes spin    { to{transform:rotate(360deg)} }
-@keyframes recPulse{ 0%,100%{transform:scale(1);background:#ef4444} 50%{transform:scale(1.07);background:#dc2626} }
-@keyframes pulsing { 0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.4)} 70%{box-shadow:0 0 0 14px rgba(249,115,22,0)} }
+/* Animations */
+@keyframes fadeUp    { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes spin      { to{transform:rotate(360deg)} }
+@keyframes recPulse  { 0%,100%{transform:scale(1);background:#ef4444} 50%{transform:scale(1.07);background:#dc2626} }
+@keyframes pulsing   { 0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.4)} 70%{box-shadow:0 0 0 14px rgba(249,115,22,0)} }
+@keyframes slideUp   { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
 
-.animate-fade-up { animation:fadeUp .35s ease forwards; }
-.animate-fade-in { animation:fadeIn .25s ease forwards; }
-.animate-spin    { animation:spin .8s linear infinite; }
-.recording       { animation:recPulse .9s ease infinite; }
-.pulse-ring      { animation:pulsing 1.5s ease infinite; }
+.animate-fade-up  { animation:fadeUp .3s ease forwards; }
+.animate-fade-in  { animation:fadeIn .25s ease forwards; }
+.animate-spin     { animation:spin .8s linear infinite; }
+.recording        { animation:recPulse .9s ease infinite; }
+.pulse-ring       { animation:pulsing 1.5s ease infinite; }
+.animate-slide-up { animation:slideUp .3s ease forwards; }
+
+/* Safe area for mobile */
+.safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Leaflet popup fix */
+.leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important; }
+.leaflet-popup-content { margin: 12px !important; }

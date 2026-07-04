@@ -5,8 +5,9 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': { target: 'http://localhost:5000', changeOrigin: true },
-      '/socket.io': { target: 'http://localhost:5000', ws: true },
+      '/api':       { target:'http://localhost:5000', changeOrigin:true },
+      '/socket.io': { target:'http://localhost:5000', ws:true },
     },
   },
+  build: { outDir:'dist', chunkSizeWarningLimit:1000 },
 });

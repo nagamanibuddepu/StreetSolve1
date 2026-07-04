@@ -14,7 +14,7 @@ try {
 
 // ─── Keyword-based fallback classifier ───────────────────────────────────────
 const KEYWORD_MAP = {
-  Roads: ['pothole', 'road', 'path', 'footpath', 'pavement', 'street', 'speed breaker', 'divider', 'highway', 'bridge', 'crack', 'damaged road', 'सड़क', 'రోడ్', 'ரோடு'],
+  Roads: ['pothole', 'road', 'path', 'footpath', 'pavement', 'street paving', 'speed breaker', 'divider', 'highway', 'bridge', 'crack', 'damaged road', 'सड़क', 'రోడ్', 'ரோடு'],
   Sanitation: ['garbage', 'waste', 'trash', 'rubbish', 'sewage', 'drain', 'stink', 'smell', 'dirty', 'litter', 'dustbin', 'कचरा', 'చెత్త', 'குப்பை'],
   Water: ['water', 'pipe', 'leak', 'tap', 'supply', 'shortage', 'flood', 'overflow', 'sewage', 'बाढ़', 'నీళ్ళు', 'தண்ணீர்'],
   Electricity: ['light', 'electric', 'power', 'transformer', 'wire', 'blackout', 'voltage', 'current', 'बिजली', 'కరెంట్', 'மின்சாரம்'],
@@ -76,7 +76,17 @@ Description: ${description}
 JSON response:
 {"suggestedCategory":"Roads","suggestedDepartment":"Roads Department","confidence":0.95,"keywords":["pothole"],"urgencyScore":7,"sentiment":"frustrated","priority":"high","isSpam":false}
 
-Categories: Roads, Sanitation, Water, Electricity, Parks, Drainage, Noise, Others
+Allowed Categories and rules:
+- Roads (potholes, roads, street paving)
+- Sanitation (garbage, waste, cleanliness)
+- Water (water pipe leaks, supply)
+- Electricity (street lights, power outages, wires, transformers)
+- Parks (gardens, trees, playgrounds)
+- Drainage (clogs, drains, waterlogging, sewage)
+- Noise (loud music, disturbances)
+- Others (general)
+
+Rules: You MUST pick the most accurate category. Example: "street light failure" goes to Electricity, not Roads or Parks. 
 priority: low/medium/high/critical. urgencyScore: 1-10.`;
 
     const response = await openai.chat.completions.create({
@@ -171,6 +181,30 @@ const generateIssueSummary = async (issues) => {
   }
 };
 
+let groq;
+try {
+  if (process.env.GROQ_API_KEY) {
+    groq = new OpenAI({ apiKey: process.env.GROQ_API_KEY, baseURL: "https://api.groq.com/openai/v1" });
+  }
+} catch(e) {}
+
+const transcribeAudio = async (buffer, mimetype) => {
+  if (!groq) throw new Error('Groq API key is missing. Add GROQ_API_KEY to your backend .env file.');
+  try {
+    // Convert memory buffer to OpenAI-compatible File object
+    const ext = mimetype.includes('mp4') ? 'mp4' : mimetype.includes('wav') ? 'wav' : 'webm';
+    const file = await OpenAI.toFile(buffer, `audio.${ext}`, { type: mimetype });
+    const response = await groq.audio.transcriptions.create({
+      file: file,
+      model: 'whisper-large-v3', // Groq's super fast whisper model
+    });
+    return response.text;
+  } catch (err) {
+    logger.error('Groq transcription failed:', err.message);
+    throw err;
+  }
+};
+
 module.exports = {
   classifyIssue,
   translateToEnglish,
@@ -178,4 +212,6 @@ module.exports = {
   checkUrgency,
   generateIssueSummary,
   classifyByKeywords,
+  classifyByKeywordsSync: classifyByKeywords,
+  transcribeAudio,
 };

@@ -13,8 +13,8 @@ const locationSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: [true, 'Name is required'], trim: true, maxlength: [100, 'Name cannot exceed 100 characters'] },
-  email: { type: String, sparse: true, lowercase: true, trim: true, match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Invalid email'] },
-  phone: { type: String, sparse: true },
+  email: { type: String, lowercase: true, trim: true, match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Invalid email'] },
+  phone: { type: String },
   password: { type: String, minlength: [8, 'Password must be at least 8 characters'], select: false },
   role: { type: String, enum: ['citizen', 'volunteer', 'ngo', 'government', 'admin'], default: 'citizen' },
   avatar: { url: String, publicId: String },
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
   issuesTaken: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Issue' }],
   issuesResolved: { type: Number, default: 0 },
   volunteerRating: { type: Number, default: 0, min: 0, max: 5 },
-  googleId: { type: String, sparse: true },
+  googleId: { type: String },
   isVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
   isBanned: { type: Boolean, default: false },
@@ -81,6 +81,8 @@ userSchema.pre('save', async function(next) {
 });
 
 userSchema.methods.matchPassword = async function(enteredPassword) {
+  if (!this.password) return false; // no password set (Google/OTP account)
+  if (!enteredPassword) return false;
   return bcrypt.compare(enteredPassword, this.password);
 };
 

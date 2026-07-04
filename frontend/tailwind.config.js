@@ -7,7 +7,16 @@ export default {
         body: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       colors: {
-        navy: { DEFAULT: '#1e3a5f', light: '#2d5282', dark: '#0d1f3c' },
+        navy: {
+          DEFAULT: '#1e3a5f',
+          light:   '#2d5282',
+          dark:    '#0d1f3c',
+        },
+        cream: '#fafaf8',
+        sand:  '#f5f0e8',
+      },
+      animation: {
+        'spin-slow': 'spin 2s linear infinite',
       },
     },
   },

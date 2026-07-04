@@ -2,7 +2,7 @@ import React from 'react';
 import useVoiceInput from '../../hooks/useVoiceInput';
 
 export default function VoiceReportInput({ lang, onTranscript }) {
-  const { isRecording, transcript, error, duration, isSupported, start, stop, clear } = useVoiceInput(lang);
+  const { isRecording, transcript, error, duration, isProcessing, isSupported, start, stop, clear } = useVoiceInput(lang);
 
   const handleStop = () => {
     stop();
@@ -19,13 +19,16 @@ export default function VoiceReportInput({ lang, onTranscript }) {
     <div className="flex flex-col items-center gap-4 py-6">
       <button
         onClick={isRecording ? handleStop : start}
+        disabled={isProcessing}
         className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl border-4 transition-all
           ${isRecording
             ? 'bg-red-500 border-red-300 text-white voice-recording shadow-lg scale-110'
+            : isProcessing
+            ? 'bg-gray-300 border-gray-200 text-gray-500 cursor-not-allowed'
             : 'bg-saffron border-saffron/30 text-white hover:scale-105 shadow-saffron'
           }`}
       >
-        {isRecording ? '⏹️' : '🎤'}
+        {isRecording ? '⏹️' : isProcessing ? '⏳' : '🎤'}
       </button>
 
       {isRecording && (
@@ -34,7 +37,13 @@ export default function VoiceReportInput({ lang, onTranscript }) {
         </div>
       )}
 
-      {!isRecording && !transcript && (
+      {isProcessing && (
+        <div className="text-blue-500 font-semibold text-sm animate-pulse">
+          ⏳ Transcribing with AI...
+        </div>
+      )}
+
+      {!isRecording && !isProcessing && !transcript && (
         <p className="text-sm text-gray-400 text-center">Tap the microphone and speak your issue</p>
       )}
 

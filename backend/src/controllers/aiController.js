@@ -1,6 +1,14 @@
-const { classifyIssue, translateToEnglish, detectSpam, generateIssueSummary } = require('../services/aiService');
+const { classifyIssue, translateToEnglish, detectSpam, generateIssueSummary, transcribeAudio } = require('../services/aiService');
 const Issue = require('../models/Issue');
 const { AppError } = require('../middleware/errorHandler');
+
+exports.transcribe = async (req, res, next) => {
+  try {
+    if (!req.file) return next(new AppError('No audio file provided', 400));
+    const text = await transcribeAudio(req.file.buffer, req.file.mimetype);
+    res.json({ success: true, data: { text } });
+  } catch (err) { next(err); }
+};
 
 exports.classify = async (req, res, next) => {
   try {

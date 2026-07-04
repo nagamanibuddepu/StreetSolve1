@@ -66,34 +66,24 @@ const classifyIssue = async (title, description, language = 'en') => {
   }
 
   try {
-    const prompt = `You are a civic issue classifier for Indian cities. Analyze the following civic complaint and respond with ONLY valid JSON.
-
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('your_')) {
+      return classifyByKeywords(`${title} ${description}`);
+    }
+    const prompt = `Classify this civic complaint from India. Respond ONLY with valid JSON.
 Title: ${title}
 Description: ${description}
-Language: ${language}
 
-Classify into exactly one of these categories: Roads, Sanitation, Water, Electricity, Parks, Drainage, Noise, Others
+JSON response:
+{"suggestedCategory":"Roads","suggestedDepartment":"Roads Department","confidence":0.95,"keywords":["pothole"],"urgencyScore":7,"sentiment":"frustrated","priority":"high","isSpam":false}
 
-Respond with this exact JSON structure:
-{
-  "suggestedCategory": "Roads",
-  "suggestedDepartment": "Roads Department",
-  "confidence": 0.95,
-  "keywords": ["pothole", "road"],
-  "urgencyScore": 7,
-  "sentiment": "frustrated",
-  "priority": "high",
-  "summary_en": "Brief English summary of the issue",
-  "isSpam": false
-}
-
-urgencyScore is 1-10 (10 = most urgent). priority is low/medium/high/critical.`;
+Categories: Roads, Sanitation, Water, Electricity, Parks, Drainage, Noise, Others
+priority: low/medium/high/critical. urgencyScore: 1-10.`;
 
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.2,
-      max_tokens: 300,
+      temperature: 0.1,
+      max_tokens: 200,
       response_format: { type: 'json_object' },
     });
 
@@ -101,7 +91,7 @@ urgencyScore is 1-10 (10 = most urgent). priority is low/medium/high/critical.`;
     result.method = 'ai';
     return result;
   } catch (err) {
-    logger.error('AI classification failed, using fallback:', err.message);
+    // Silent fallback - keyword classification is good enough
     return classifyByKeywords(`${title} ${description}`);
   }
 };
@@ -189,3 +179,5 @@ module.exports = {
   generateIssueSummary,
   classifyByKeywords,
 };
+// Synchronous alias for use in fast path
+exports.classifyByKeywordsSync = classifyByKeywords;

@@ -42,7 +42,7 @@ const issueSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    enum: ['Roads Department','Sanitation Department','Water Department','Electricity Department','Parks Department','Drainage Department','General'],
+    enum: ['Roads Department','Sanitation Department','Water Department','Electricity Department','Parks Department','Drainage Department','Noise & Environment Department','General'],
     default: 'General',
   },
   aiClassification: {
@@ -54,7 +54,7 @@ const issueSchema = new mongoose.Schema({
     urgencyScore: Number,
   },
   priority: { type: String, enum: ['low', 'medium', 'high', 'critical'], default: 'medium' },
-  language: { type: String, default: 'en' },
+  reportLang: { type: String, default: 'en' }, // renamed from 'language' to avoid MongoDB text index conflict
 
   media: [mediaSchema],
   location: { type: locationSchema, required: true },
@@ -127,7 +127,7 @@ issueSchema.index({ reportedBy: 1 });
 issueSchema.index({ createdAt: -1 });
 issueSchema.index({ voteCount: -1 });
 issueSchema.index({ trendingScore: -1 });
-issueSchema.index({ title: 'text', description: 'text', tags: 'text' });
+issueSchema.index({ title: 'text', description: 'text', tags: 'text' }, { language_override: 'searchLang', default_language: 'english' });
 
 issueSchema.virtual('isExpired').get(function() {
   if (!this.expectedResolutionDate) return false;
@@ -145,10 +145,14 @@ issueSchema.pre('save', function(next) {
 
 issueSchema.statics.getDepartmentFromCategory = function(category) {
   const map = {
-    Roads: 'Roads Department', Sanitation: 'Sanitation Department',
-    Water: 'Water Department', Electricity: 'Electricity Department',
-    Parks: 'Parks Department', Drainage: 'Drainage Department',
-    Others: 'General', Noise: 'General',
+    Roads: 'Roads Department',
+    Sanitation: 'Sanitation Department',
+    Water: 'Water Department',
+    Electricity: 'Electricity Department',
+    Parks: 'Parks Department',
+    Drainage: 'Drainage Department',
+    Noise: 'Noise & Environment Department',
+    Others: 'General',
   };
   return map[category] || 'General';
 };

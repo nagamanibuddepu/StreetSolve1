@@ -49,10 +49,10 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: [
-      'issue_accepted', 'issue_inprogress', 'issue_completed', 'issue_reopened',
+      'issue_reported', 'issue_accepted', 'issue_inprogress', 'issue_completed', 'issue_reopened',
       'issue_verified', 'issue_rejected', 'new_comment', 'new_vote',
       'volunteer_taken', 'feedback_request', 'system', 'nearby_issue',
-      'issue_overdue', 'otp',
+      'issue_overdue', 'otp', 'new_issue_gov'
     ],
   },
   title: { type: String, required: true },

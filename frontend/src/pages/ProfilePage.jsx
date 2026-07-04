@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { LANGUAGES } from '../utils/helpers';
@@ -20,18 +20,24 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ name: user?.name || '', bio: user?.bio || '', language: user?.language || 'en' });
   const [loading, setLoading] = useState(false);
+  const [showSection, setShowSection] = useState(null);
+  
+  const [prefForm, setPrefForm] = useState(user?.notificationPrefs || {
+    email: true, sms: true, inApp: true, nearbyIssues: true
+  });
 
   const roleCfg = ROLE_CONFIG[user?.role] || ROLE_CONFIG.citizen;
   const initials = (user?.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
-  const handleSave = async () => {
-    if (!form.name.trim()) { toast.error('Name cannot be empty'); return; }
+  const handleSave = async (isPrefs = false) => {
+    if (!isPrefs && !form.name.trim()) { toast.error('Name cannot be empty'); return; }
     setLoading(true);
     try {
-      const res = await authAPI.updateProfile(form);
+      const payload = isPrefs ? { notificationPrefs: prefForm } : form;
+      const res = await authAPI.updateProfile(payload);
       setUser(res.data.data);
-      setEditing(false);
-      toast.success('Profile updated!');
+      if (!isPrefs) setEditing(false);
+      toast.success(isPrefs ? 'Preferences saved!' : 'Profile updated!');
     } catch (err) { toast.error(err.message); }
     finally { setLoading(false); }
   };
@@ -163,18 +169,70 @@ export default function ProfilePage() {
       {/* Account settings */}
       <div className="card mb-4 divide-y divide-slate-100 p-0 overflow-hidden">
         <div className="px-4 py-2.5 bg-slate-50">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Account</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Account Settings</span>
         </div>
-        <button className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-slate-50 transition-colors">
-          <span className="text-xl w-8 text-center">🔔</span>
-          <span className="font-medium text-sm text-slate-700 flex-1">Notification Preferences</span>
-          <span className="text-slate-300 text-lg">›</span>
-        </button>
-        <button className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-slate-50 transition-colors">
-          <span className="text-xl w-8 text-center">🔒</span>
-          <span className="font-medium text-sm text-slate-700 flex-1">Privacy & Security</span>
-          <span className="text-slate-300 text-lg">›</span>
-        </button>
+        
+        {/* Notifications */}
+        <div>
+          <button 
+            onClick={() => setShowSection(showSection === 'notif' ? null : 'notif')} 
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-slate-50 transition-colors">
+            <span className="text-xl w-8 text-center">🔔</span>
+            <span className="font-medium text-sm text-slate-700 flex-1">Notification Preferences</span>
+            <span className="text-slate-300 text-lg">{showSection === 'notif' ? '˅' : '›'}</span>
+          </button>
+          
+          <AnimatePresence>
+            {showSection === 'notif' && (
+              <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden bg-slate-50/50">
+                <div className="px-4 py-3 space-y-3 border-t border-slate-100">
+                  {Object.entries({
+                    inApp: 'In-App Notifications',
+                    email: 'Email Delivery',
+                    sms: 'SMS Updates',
+                    nearbyIssues: 'Alerts for Nearby Issues'
+                  }).map(([key, label]) => (
+                    <div key={key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-slate-600">{label}</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" checked={prefForm[key]} 
+                          onChange={(e) => setPrefForm({ ...prefForm, [key]: e.target.checked })} />
+                        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                      </label>
+                    </div>
+                  ))}
+                  <button onClick={() => handleSave(true)} disabled={loading} className="w-full btn btn-primary btn-sm mt-2">
+                    {loading ? 'Saving...' : 'Save Preferences'}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Privacy & Security */}
+        <div>
+          <button 
+            onClick={() => setShowSection(showSection === 'privacy' ? null : 'privacy')} 
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-slate-50 transition-colors">
+            <span className="text-xl w-8 text-center">🔒</span>
+            <span className="font-medium text-sm text-slate-700 flex-1">Privacy & Security</span>
+            <span className="text-slate-300 text-lg">{showSection === 'privacy' ? '˅' : '›'}</span>
+          </button>
+          
+          <AnimatePresence>
+            {showSection === 'privacy' && (
+              <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden bg-slate-50/50">
+                <div className="px-4 py-4 space-y-3 border-t border-slate-100 text-xs text-slate-600">
+                  <p><strong>Data encryption in transit:</strong> StreetSolve encrypts your personal information using state-of-the-art TLS configurations.</p>
+                  <p><strong>Identity protection:</strong> If you use the Anonymous toggle when submitting reports, your identity is completely shielded from public view and only accessible to system administrators under strict review conditions.</p>
+                  <p><strong>Location tracking:</strong> We only track your exact coordinates at the exact moment you drop an issue pin, or specifically request a location recalculation.</p>
+                  <button className="text-orange-600 font-semibold hover:underline mt-2 inline-block">Download Account Data</button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Logout */}

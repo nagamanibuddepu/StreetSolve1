@@ -46,7 +46,10 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   isBanned: { type: Boolean, default: false },
   banReason: String,
-  otp: { code: { type: String, select: false }, expiresAt: Date, attempts: { type: Number, default: 0 } },
+  otp: {
+    type: new mongoose.Schema({ code: String, expiresAt: Date, attempts: { type: Number, default: 0 } }, { _id: false }),
+    select: false
+  },
   passwordResetToken: { type: String, select: false },
   passwordResetExpires: Date,
   issuesReported: { type: Number, default: 0 },
