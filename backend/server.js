@@ -41,6 +41,8 @@ const statsRoutes = require('./routes/stats');
 const app = express();
 const server = http.createServer(app);
 
+app.set('trust proxy', 1);
+
 // ─── Socket.IO ──────────────────────────────────────────────────────────────
 const io = new Server(server, {
   cors: {
@@ -53,6 +55,7 @@ const io = new Server(server, {
 // Make io accessible in routes
 app.set('io', io);
 initSocketHandlers(io);
+
 
 // ─── Security Middleware ────────────────────────────────────────────────────
 app.use(helmet({
