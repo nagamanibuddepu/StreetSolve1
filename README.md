@@ -1,161 +1,378 @@
-# StreetSolve
+# 🚀 StreetSolve
 
-StreetSolve is a full-stack civic engagement and issue-resolution platform designed to help communities report local problems, track progress, and connect citizens with government bodies, volunteers, and NGOs. The platform combines civic issue reporting, geolocation, AI-assisted categorization, and real-time updates in a single experience.
+> AI-powered civic issue reporting platform enabling citizens to report local problems through **voice, text, or images** with intelligent routing to the appropriate government departments.
 
-The project is organized as a monorepo with a Node.js/Express backend and a React/Vite frontend.
+![React](https://img.shields.io/badge/React-19-blue)
+![Node.js](https://img.shields.io/badge/Node.js-Express-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-success)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-RealTime-black)
+![License](https://img.shields.io/badge/License-MIT-orange)
 
-## What the project does
+---
 
-StreetSolve enables users to:
-
-- Report civic issues such as potholes, sanitation problems, water supply issues, electricity faults, and more
-- Submit reports using text, voice, or image uploads
-- Attach location data to ensure better routing to the right department or authority
-- Track issue status and lifecycle from report to resolution
-- Vote, comment, and engage with public issues
-- Receive real-time notifications for updates and nearby activity
-- Work across multiple roles, including citizens, volunteers, NGOs, government officials, and admins
-
-## Core features
-
-### Citizen experience
-- Report issues from mobile-friendly forms
-- Choose between text, voice, and image-based reporting
-- Add location automatically or manually
-- Track submitted issues and their progress
-
-### Government and community workflows
-- Route issues to relevant departments based on category and location
-- Support status updates and assignment workflows
-- Enable volunteers and NGOs to engage with issues in their area
-- Provide role-based access for different user types
-
-### AI and smart processing
-- AI-assisted issue classification and urgency assessment
-- Keyword-based fallback classification when AI services are unavailable
-- Voice transcription support for multilingual reporting
-- Automated summary and routing logic for civic data
-
-### Real-time capabilities
-- Socket.IO-based notification support
-- Live updates for issue activity and notifications
-- Backend services for recurring tasks and notifications
-
-## Tech stack
+## 🌐 Live Demo
 
 ### Frontend
+https://street-solve1-frontend.vercel.app
+
+### Backend API
+https://streetsolve-backend.onrender.com
+
+---
+
+# 📖 Overview
+
+StreetSolve is an AI-powered civic engagement platform that bridges the gap between citizens and government authorities.
+
+Citizens can report potholes, garbage dumps, broken streetlights, drainage issues, water leaks, and more using:
+
+- 🎙 Voice (Regional Languages)
+- 📝 Text
+- 📷 Images
+
+The platform automatically:
+
+- Classifies the issue using AI
+- Detects location
+- Routes it to the correct government department
+- Enables real-time status tracking
+- Sends notifications
+- Allows community voting & validation
+
+---
+
+# ✨ Features
+
+## 👨 Citizens
+
+- Register & Login
+- Google Authentication
+- Report issues with:
+  - Voice
+  - Images
+  - Text
+- GPS location support
+- View nearby issues
+- Vote on issues
+- Comment on issues
+- Track issue progress
+- Notifications
+
+---
+
+## 🏛 Government
+
+- Department dashboard
+- Assigned issues
+- Status updates
+- Analytics
+- Performance metrics
+
+---
+
+## 🤝 NGO / Volunteers
+
+- Accept available issues
+- Upload progress images
+- Complete assigned work
+- Community collaboration
+
+---
+
+## 🤖 AI Features
+
+- Voice-to-text
+- AI issue classification
+- Language translation
+- Issue summarization
+- Smart department routing
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
 - React
 - Vite
-- React Router
+- TailwindCSS
 - Zustand
-- TanStack React Query
-- Tailwind CSS
-- Framer Motion
-- Leaflet / React Leaflet
-- Socket.IO client
+- Axios
+- React Router
+- React Leaflet
+- Socket.IO Client
 
-### Backend
+---
+
+## Backend
+
 - Node.js
 - Express.js
-- MongoDB with Mongoose
-- JWT authentication
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
 - Socket.IO
-- Multer and Cloudinary for media uploads
-- OpenAI and Groq integration for AI features
-- Winston logging
-- Helmet, CORS, rate limiting, and input sanitization for security
+- Multer
+- Cloudinary
+- Nodemailer
+- Twilio
 
-## Project structure
+---
 
-- backend/ - Express API, database models, services, and route handlers
-- frontend/ - React application and UI pages
-- documentation.md - Additional architecture and implementation notes
-- README_QUICK_START.md - Quick local setup notes
+## AI & APIs
 
-## Prerequisites
+- Google Gemini API
+- Google Maps API
+- Cloudinary
+- MongoDB Atlas
 
-Make sure you have the following installed:
+---
 
-- Node.js 18+ recommended
-- npm
-- MongoDB instance or connection string
+# 📂 Project Structure
 
-## Getting started
-
-### 1. Install dependencies
-
-From the project root:
-
-```bash
-npm install
-cd backend && npm install
-cd ../frontend && npm install
-cd ..
+```
+StreetSolve1
+│
+├── frontend
+│   ├── src
+│   ├── public
+│   └── package.json
+│
+├── backend
+│   ├── src
+│   ├── package.json
+│   └── .env
+│
+└── README.md
 ```
 
-### 2. Configure environment variables
+---
 
-Create the required environment files for the backend and frontend as needed for your local setup. The backend uses environment variables for:
+# ⚙ Installation
 
-- MongoDB connection
-- JWT secrets
-- OpenAI / Groq / other AI service keys
-- Cloudinary configuration
-- CORS and client URL settings
+## 1. Clone Repository
 
-### 3. Seed sample data
+```bash
+git clone https://github.com/nagamanibuddepu/StreetSolve1.git
 
-From the backend folder:
+cd StreetSolve1
+```
+
+---
+
+## 2. Backend Setup
+
+```bash
+cd backend
+
+npm install
+```
+
+Create a `.env` file inside the backend folder.
+
+Example:
+
+```env
+PORT=5000
+
+NODE_ENV=development
+
+CLIENT_URL=http://localhost:5173
+
+MONGODB_URI=your_mongodb_uri
+
+JWT_SECRET=your_secret
+
+GOOGLE_MAPS_API_KEY=your_key
+
+GOOGLE_CLIENT_ID=your_key
+
+GOOGLE_CLIENT_SECRET=your_secret
+
+OPENAI_API_KEY=your_key
+
+CLOUDINARY_CLOUD_NAME=your_cloud
+
+CLOUDINARY_API_KEY=your_key
+
+CLOUDINARY_API_SECRET=your_secret
+
+SMTP_HOST=...
+
+SMTP_PORT=...
+
+SMTP_EMAIL=...
+
+SMTP_PASSWORD=...
+
+TWILIO_ACCOUNT_SID=...
+
+TWILIO_AUTH_TOKEN=...
+
+TWILIO_PHONE_NUMBER=...
+```
+
+Seed the database
 
 ```bash
 npm run seed
 ```
 
-### 4. Run the application
-
-Start the backend:
+Start backend
 
 ```bash
-cd backend
 npm run dev
 ```
 
-Start the frontend:
+---
+
+## 3. Frontend Setup
 
 ```bash
-cd frontend
+cd ../frontend
+
+npm install
+```
+
+Create
+
+```
+frontend/.env
+```
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Run frontend
+
+```bash
 npm run dev
 ```
 
-The frontend is typically available at:
+Open
 
-- http://localhost:5173
+```
+http://localhost:5173
+```
 
-The backend API runs at:
+---
 
-- http://localhost:5000
+# 🚀 Deployment
 
-You can also use the root workspace scripts if you prefer to run both together.
+## Frontend
 
-## Usage flow
+Hosted on **Vercel**
 
-1. Register or sign in as a user.
-2. Navigate to the reporting experience.
-3. Choose a reporting method: text, voice, or image.
-4. Add a title, description, category, and location.
-5. Submit the issue.
-6. Track updates, comments, votes, and status changes.
+```
+https://street-solve1-frontend.vercel.app
+```
 
-## Notes
+Environment Variable
 
-This repository reflects a functional civic-tech prototype with a strong emphasis on practical reporting workflows, geolocation, and AI-assisted issue handling. The implementation is designed to be extensible for production use with additional deployment, monitoring, and governance integrations.
+```
+VITE_API_URL=https://streetsolve-backend.onrender.com/api
+```
 
-## Next steps
+---
 
-Possible future improvements include:
+## Backend
 
-- Production deployment configuration
-- Expanded admin analytics dashboards
-- Better moderation and spam controls
-- More advanced geospatial routing and automation
-- Additional notification channels and integrations
+Hosted on **Render**
+
+```
+https://streetsolve-backend.onrender.com
+```
+
+Required Environment Variables
+
+```
+NODE_ENV=production
+
+CLIENT_URL=https://street-solve1-frontend.vercel.app
+
+MONGODB_URI=...
+
+JWT_SECRET=...
+
+GOOGLE_MAPS_API_KEY=...
+
+GOOGLE_CLIENT_ID=...
+
+GOOGLE_CLIENT_SECRET=...
+
+OPENAI_API_KEY=...
+
+CLOUDINARY_...
+
+SMTP_...
+
+TWILIO_...
+```
+
+---
+
+# 👥 Demo Accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| Citizen | priya@example.com | Test@1234 |
+| NGO | ngo@greenearth.org | Test@1234 |
+| Admin | admin@streetsolve.in | Admin@123 |
+
+---
+
+# 📊 Major Features
+
+- ✅ AI Voice Reporting
+- ✅ Regional Language Support
+- ✅ Google Authentication
+- ✅ Live Notifications
+- ✅ Real-time Updates (Socket.IO)
+- ✅ GPS Based Reporting
+- ✅ Image Uploads
+- ✅ Community Voting
+- ✅ Analytics Dashboard
+- ✅ Government Workflow
+- ✅ NGO Collaboration
+- ✅ Cloud Image Storage
+- ✅ Secure JWT Authentication
+
+---
+
+# 📌 Future Improvements
+
+- Mobile Application
+- Push Notifications
+- AI Severity Prediction
+- Duplicate Issue Detection
+- OCR from Uploaded Images
+- Offline Reporting
+- Government SLA Tracking
+- Advanced Analytics Dashboard
+
+---
+
+# 👩‍💻 Author
+
+**Nagamani Buddepu**
+
+GitHub
+
+https://github.com/nagamanibuddepu
+
+Project Repository
+
+https://github.com/nagamanibuddepu/StreetSolve1
+
+---
+
+# ⭐ Support
+
+If you found this project useful,
+
+⭐ Star the repository
+
+🍴 Fork the project
+
+🤝 Contributions are welcome!
