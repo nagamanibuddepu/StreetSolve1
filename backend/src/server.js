@@ -144,18 +144,14 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);
 
 // ─── Serve Frontend in Production ───────────────────────────────────────────
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
-  });
-}
+// Health check
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'StreetSolve Backend Running 🚀'
+    message: 'StreetSolve Backend API is running 🚀'
   });
 });
+
 
 // ─── 404 Handler ────────────────────────────────────────────────────────────
 app.use('*', (req, res) => {
